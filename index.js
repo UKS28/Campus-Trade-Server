@@ -324,7 +324,7 @@ app.use('/uploads', express.static(__dirname+'/uploads'));
 // to make connection between server and client
 app.use(cors({
     credentials:true,
-    origin:'http://127.0.0.1:5173',
+    origin:'https://campus-trade.onrender.com/',
 }))
 
 // password -l4gESO3pZxbqerBJ
@@ -651,7 +651,9 @@ app.get('/bookings',async (req,res)=>{
 // res.json(await Booking.find({user:userData.id}));
 })
 
-app.listen(4000);
+app.listen(4000, ()=>{
+    console.log("hello");
+});
     
     
     
