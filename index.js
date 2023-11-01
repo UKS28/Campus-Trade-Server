@@ -324,7 +324,7 @@ app.use('/uploads', express.static(__dirname+'/uploads'));
 // to make connection between server and client
 app.use(cors({
     credentials:true,
-    origin:'https://campus-trade.onrender.com/',
+    origin:'https://campus-trade.onrender.com',
 }))
 
 // password -l4gESO3pZxbqerBJ
