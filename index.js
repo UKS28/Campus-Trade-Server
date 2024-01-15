@@ -277,8 +277,14 @@ app.get('/items',async (req,res)=>{
     else
     {
         
+        // console.log(itemName);
+        // res.json(await Item.find({title:itemName}));
+        const regex = new RegExp(itemName, 'i'); // 'i' flag for case-insensitive search
+
         console.log(itemName);
-        res.json(await Item.find({title:itemName}));
+
+        // Use the regex to find items with titles containing the substring
+        res.json(await Item.find({ title: { $regex: regex } }));
     }
 })
 
@@ -306,40 +312,109 @@ app.post('/bookings',async (req,res)=>{
         }=req.body;
 //    MAILING LOGIC:
 
-let testAccount=await nodemailer.createTestAccount();
+// let testAccount=await nodemailer.createTestAccount();
+// const transporter = nodemailer.createTransport({
+//     host: 'smtp.ethereal.email',
+//     port: 587,
+//     auth: {
+//         user: 'lexus95@ethereal.email',
+//         pass: 'CzpfYD7QrMvbrjfQqy'
+//     }
+// });
+//   var mailOptions = {
+//     from: 'lexus95@ethereal.email',
+//     to:`${ownerContact}`,
+//     subject: 'Booked',
+//     text: 'One item is booked by someone',
+//     html:`
+//     <div style="padding:10px;border-style:ridge">
+//     <p>you have booking request</p>
+//     <ul>
+//     <li>name: ${name}</li>
+//     <li>contact no: ${phone}</li>
+//     </ul>
+//     </div>
+//     `
+//   };
+  
+//     transporter.sendMail(mailOptions, function(error, info){
+//     if (error) {
+//       console.log(error);
+//     } else {
+//       console.log('Email sent: ' + info.response);
+//     }
+//   })
+
+
+//   // RETURNING BOOKING
+//     Booking.create({
+//         item,checkIn,numberOfItems,name,phone,price,user:userData.id 
+//     }).then((doc)=>{
+        
+//         res.json(doc);
+//     }).catch((e)=>{
+//         throw e;
+//     });
+// })
+
 const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
+    service:'gmail',
+    host: "smtp.gmail.com",
     port: 587,
+    secure: false,
     auth: {
-        user: 'lexus95@ethereal.email',
-        pass: 'CzpfYD7QrMvbrjfQqy'
-    }
-});
-  var mailOptions = {
-    from: 'lexus95@ethereal.email',
+      // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+      user: process.env.USER,
+      pass: process.env.PASSWORD,
+    },
+  });
+
+  const mailOptions={
+    from:{
+        name:'campus Trade',
+        address:"ujjwalks.it.20@nitj.ac.in"
+    },
     to:`${ownerContact}`,
-    subject: 'Booked',
-    text: 'One item is booked by someone',
+    subject:`Your Item ${item_name} is Booked!`,
+    // text:`Your Item ${item_name} is Sold!`,
+    // html:`
+    // <div style="padding:10px;border-style:ridge">
+    // <ul>
+    // <li>name: ${name}</li>
+    // <li>contact no: ${phone}</li>
+    // </ul>
+    // </div>
+    // `
     html:`
     <div style="padding:10px;border-style:ridge">
-    <p>you have booking request</p>
+    <p>Congratulations ${owner_name} ,</p> <br>
+    <p>Someone is willing to buy your item. The customer details are given below:</p>
     <ul>
-    <li>name: ${name}</li>
-    <li>contact no: ${phone}</li>
+    <li>Name: ${name}</li>
+    <li>Contact no: ${phone}</li>
     </ul>
+    <p>
+    Regards,
+    </p>
+    <p>
+    Team campusTrade
+    </p>
     </div>
     `
-  };
-  
-    transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
+  }
+
+  const sendMail= async(transporter, mailOptions)=>{
+    try{
+        await transporter.sendMail(mailOptions);
+        console.log("email send");
     }
-  })
+    catch{
+        console.log("some error occur");
+        console.error(error);
+    }
+  }
 
-
+  sendMail(transporter,mailOptions);
   // RETURNING BOOKING
     Booking.create({
         item,checkIn,numberOfItems,name,phone,price,user:userData.id 
@@ -350,8 +425,6 @@ const transporter = nodemailer.createTransport({
         throw e;
     });
 })
-
-
 
 app.get('/bookings',async (req,res)=>{
     // console.log('inside get booking');
