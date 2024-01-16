@@ -28,7 +28,7 @@ const app=express();
 app.use(express.json());
 // cookie parser so than we can get re.cookies
 app.use(cookieParser());
-
+app.set("trust proxy", 1);
 app.use('/uploads', express.static(__dirname+'/uploads'));
 
 // to make connection between server and client
