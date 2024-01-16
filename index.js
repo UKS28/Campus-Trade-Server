@@ -112,9 +112,9 @@ app.post('/login',async(req,res)=>{
             if(passOk){
                 jwt.sign({email:userDoc.email,id:userDoc._id},jwtSecret,{},(err,token)=>{
                     if(err)throw err;
-                    // console.log("inside index.js for password check");
-                    // console.log(userDoc);
-                    res.cookie('token',token).json(userDoc);
+                  
+                    res.cookie('token',token).json({"token":token,userDoc});
+                    // res.json({"token":token,userDoc});
                 })
                 // res.json('password ok');
 
